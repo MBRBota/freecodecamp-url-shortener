@@ -1,0 +1,56 @@
+*{
+  box-sizing: border-box;
+}
+
+body{
+  margin: 0;
+  height: 100vh;
+  font-family: 'Roboto', sans-serif;
+  background-color: #C4E0D7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shortener__container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 30%;
+}
+
+.shortener__container main{
+  width: 100%;
+}
+
+.shortener__form{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.4rem;
+  border-radius: 5px;
+  background-color: #689A8A;
+  font-weight: 500;
+}
+
+.shortener__form > * {
+  margin: 0px 10px;
+}
+
+#url_input{
+  width: 60%;
+}
+
+.shortener__button{
+  border: 2px solid black;
+  background-color: #30564A;
+  padding: 5px;
+  font-weight: 600;
+  color: #DBEAE6;
+}
+
+.shortener__button:hover{
+  background-color: #689A8A;
+  cursor: pointer;
+}
+
