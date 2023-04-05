@@ -16,7 +16,13 @@ body{
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
   width: 30%;
+}
+
+.shortener__header{
+  position: absolute;
+  top: -100%;
 }
 
 .shortener__container main{
