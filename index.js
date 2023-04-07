@@ -12,8 +12,8 @@ const MONGO_URI = process.env.MONGO_URI;
 mongoose.set('strictQuery', true);
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
+// Cross-origin resource sharing middleware for freeCodeCamp remote testing
 app.use(cors());
-
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
@@ -55,7 +55,7 @@ app.post('/api/shorturl', (req, res) => {
             })
             .catch((err) => {
               console.log(err);
-              res.status(400).send("Something went wrong");
+              res.status(400).send("Something went wrong.");
             })
         }
       })
@@ -63,7 +63,21 @@ app.post('/api/shorturl', (req, res) => {
   })
     .catch((err) => {
       console.log(err);
-      res.status(400).send("Something went wrong");
+      res.status(400).send("Something went wrong.");
+    })
+})
+
+app.get('/api/shorturl/:id', (req, res) => {
+  Url.findOne({ short_url: req.params.id })
+    .then((foundUrl) => {
+      if(!foundUrl){
+        return res.status(404).send("URL not found.");
+      }
+      res.redirect(foundUrl.original_url);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send("Something went wrong.")
     })
 })
 
