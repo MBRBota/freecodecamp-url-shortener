@@ -9,6 +9,7 @@ const Url = require('./models/url');
 const PORT = process.env.PORT;
 const MONGO_URI = process.env.MONGO_URI;
 
+mongoose.set('strictQuery', true);
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(cors());
@@ -23,23 +24,46 @@ app.get('/', (req, res) => {
 
 app.post('/api/shorturl', (req, res) => {
 
-  // per project requirements, only allow URLs with protocol intact
-  const protocolRegex = /^https?:\/\//ig;
-  const isValidUrl = protocolRegex.test(req.body.url);
+  // remove root path from URL for storage, lookup and validation
+  const pathlessUrl = req.body.url.replace(/\/$/, '');
 
-  // strip protocol from posted URL for validation
-  const hostname = req.body.url.replace(protocolRegex, '')
+  // check if URL has already been shortened
+  Url.findOne({ original_url: pathlessUrl })
+    .then((foundUrl) => {
 
-  // URL validation
-  dns.lookup(hostname, (err, data) => {
-    if (err || !isValidUrl){
-      console.log(err);
-      console.log(isValidUrl)
-      res.status(400).json({ error: 'invalid url' })
+    if(foundUrl){
+      res.json({ original_url: foundUrl.original_url, short_url: foundUrl.short_url });
     } else {
-      res.json({ original_url: req.body.url })
+
+      // per project requirements, only allow URLs with protocol intact
+      const protocolRegex = /^https?:\/\//i;
+      const isValidUrl = protocolRegex.test(pathlessUrl);
+    
+      // strip protocol from posted URL for validation
+      const hostname = pathlessUrl.replace(protocolRegex, '');
+    
+      // URL validation
+      dns.lookup(hostname, (err) => {
+        if (err || !isValidUrl){
+          console.log(err);
+          res.status(400).json({ error: 'invalid url' })
+        } else {
+          const url = new Url({ original_url: pathlessUrl })
+
+          url.save()
+            .then((savedUrl) => {
+              res.json({ original_url: savedUrl.original_url, short_url: savedUrl.short_url })
+            })
+            .catch((err) => {
+              console.log(err);
+            })
+        }
+      })
     }
   })
+    .catch((err) => {
+      console.log(err);
+    })
 })
 
 
