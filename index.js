@@ -45,7 +45,6 @@ app.post('/api/shorturl', (req, res) => {
       // URL validation
       dns.lookup(hostname, (err) => {
         if (err || !isValidUrl){
-          console.log(err);
           res.status(400).json({ error: 'invalid url' })
         } else {
           const url = new Url({ original_url: pathlessUrl })
@@ -56,6 +55,7 @@ app.post('/api/shorturl', (req, res) => {
             })
             .catch((err) => {
               console.log(err);
+              res.status(400).send("Something went wrong");
             })
         }
       })
@@ -63,6 +63,7 @@ app.post('/api/shorturl', (req, res) => {
   })
     .catch((err) => {
       console.log(err);
+      res.status(400).send("Something went wrong");
     })
 })
 
