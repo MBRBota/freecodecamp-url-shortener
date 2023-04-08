@@ -17,7 +17,8 @@ body{
   flex-direction: column;
   align-items: center;
   position: relative;
-  width: 30%;
+  width: 75%;
+  max-width: 600px;
 }
 
 .shortener__header{
@@ -60,3 +61,10 @@ body{
   cursor: pointer;
 }
 
+.usage__container{
+  position: absolute;
+}
+
+.usage__container h3{
+  text-align: center;
+}

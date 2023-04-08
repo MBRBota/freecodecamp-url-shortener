@@ -24,6 +24,13 @@
               <input id="url_input" type="text" name="url" placeholder="https://www.freecodecamp.org/" />
               <input class="shortener__button" type="submit" value="POST URL" />
           </form>
+          <div class="usage__container">
+            <h3>Instructions</h3>
+            <p><code>&lt;localhost_url&gt;/api/shorturl/&lt;your_shorturl&gt;</code> redirects to the URL you shortened.</p>
+            <p><code>&lt;your_shorturl&gt;</code> is retrieved from the JSON response after posting a URL.</p>
+            <h3>Example</h3>
+            <p><code>localhost:3000/api/shorturl/1</code> redirects to <code>https://www.google.ro</code> (or whatever the first URL in your database is)</p>
+          </div>
         </section>
       </main>
     </div>
