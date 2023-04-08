@@ -24,30 +24,30 @@ app.get('/', (req, res) => {
 
 app.post('/api/shorturl', (req, res) => {
 
-  // remove root path from URL for storage, lookup and validation
-  const pathlessUrl = req.body.url.replace(/\/$/, '');
+  // remove trailing slash (if existent) from URL for lookup
+  const cleanedUrl = req.body.url.replace(/\/$/, '');
 
   // check if URL has already been shortened
-  Url.findOne({ original_url: pathlessUrl })
+  Url.findOne({ original_url: cleanedUrl })
     .then((foundUrl) => {
-
     if(foundUrl){
       res.json({ original_url: foundUrl.original_url, short_url: foundUrl.short_url });
     } else {
 
       // per project requirements, only allow URLs with protocol intact
       const protocolRegex = /^https?:\/\//i;
-      const isValidUrl = protocolRegex.test(pathlessUrl);
+      const isValidUrl = protocolRegex.test(cleanedUrl);
     
-      // strip protocol from posted URL for validation
-      const hostname = pathlessUrl.replace(protocolRegex, '');
+      // strip protocol and path from posted URL for validation
+      const hostnameRegex = /^https?:\/\/|\/.*/gi
+      const hostname = cleanedUrl.replace(hostnameRegex, '');
     
       // URL validation
       dns.lookup(hostname, (err) => {
         if (err || !isValidUrl){
           res.json({ error: 'invalid url' })
         } else {
-          const url = new Url({ original_url: pathlessUrl })
+          const url = new Url({ original_url: cleanedUrl })
 
           url.save()
             .then((savedUrl) => {
