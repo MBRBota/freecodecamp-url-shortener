@@ -43,19 +43,18 @@ app.post('/api/shorturl', (req, res) => {
     // URL validation
     dns.lookup(hostname, (err) => {
       if (err || !isValidUrl){
-        res.json({ error: 'invalid url' })
-      } else {
-        const url = new Url({ original_url: cleanedUrl })
-
-        url.save()
-          .then((savedUrl) => {
-            res.json({ original_url: savedUrl.original_url, short_url: savedUrl.short_url })
-          })
-          .catch((err) => {
-            console.log(err);
-            res.status(400).send("Something went wrong.");
-          })
+        return res.json({ error: 'invalid url' })
       }
+      const url = new Url({ original_url: cleanedUrl })
+
+      url.save()
+        .then((savedUrl) => {
+          res.json({ original_url: savedUrl.original_url, short_url: savedUrl.short_url })
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(400).send("Something went wrong.");
+        })
     })
   })
     .catch((err) => {
