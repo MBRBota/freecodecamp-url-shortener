@@ -23,7 +23,6 @@ app.get('/', (req, res) => {
 });
 
 app.post('/api/shorturl', (req, res) => {
-
   // remove trailing slash (if existent) from URL for lookup
   const cleanedUrl = req.body.url.replace(/\/$/, '');
 
@@ -31,35 +30,33 @@ app.post('/api/shorturl', (req, res) => {
   Url.findOne({ original_url: cleanedUrl })
     .then((foundUrl) => {
     if(foundUrl){
-      res.json({ original_url: foundUrl.original_url, short_url: foundUrl.short_url });
-    } else {
-
-      // per project requirements, only allow URLs with protocol intact
-      const protocolRegex = /^https?:\/\//i;
-      const isValidUrl = protocolRegex.test(cleanedUrl);
-    
-      // strip protocol and path from posted URL for validation
-      const hostnameRegex = /^https?:\/\/|\/.*/gi
-      const hostname = cleanedUrl.replace(hostnameRegex, '');
-    
-      // URL validation
-      dns.lookup(hostname, (err) => {
-        if (err || !isValidUrl){
-          res.json({ error: 'invalid url' })
-        } else {
-          const url = new Url({ original_url: cleanedUrl })
-
-          url.save()
-            .then((savedUrl) => {
-              res.json({ original_url: savedUrl.original_url, short_url: savedUrl.short_url })
-            })
-            .catch((err) => {
-              console.log(err);
-              res.status(400).send("Something went wrong.");
-            })
-        }
-      })
+      return res.json({ original_url: foundUrl.original_url, short_url: foundUrl.short_url });
     }
+    // per project requirements, only allow URLs with protocol intact
+    const protocolRegex = /^https?:\/\//i;
+    const isValidUrl = protocolRegex.test(cleanedUrl);
+  
+    // strip protocol and path from posted URL for validation
+    const hostnameRegex = /^https?:\/\/|\/.*/gi
+    const hostname = cleanedUrl.replace(hostnameRegex, '');
+  
+    // URL validation
+    dns.lookup(hostname, (err) => {
+      if (err || !isValidUrl){
+        res.json({ error: 'invalid url' })
+      } else {
+        const url = new Url({ original_url: cleanedUrl })
+
+        url.save()
+          .then((savedUrl) => {
+            res.json({ original_url: savedUrl.original_url, short_url: savedUrl.short_url })
+          })
+          .catch((err) => {
+            console.log(err);
+            res.status(400).send("Something went wrong.");
+          })
+      }
+    })
   })
     .catch((err) => {
       console.log(err);
