@@ -45,7 +45,7 @@ app.post('/api/shorturl', (req, res) => {
       // URL validation
       dns.lookup(hostname, (err) => {
         if (err || !isValidUrl){
-          res.status(400).json({ error: 'invalid url' })
+          res.json({ error: 'invalid url' })
         } else {
           const url = new Url({ original_url: pathlessUrl })
 
